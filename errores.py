@@ -2,7 +2,7 @@ try:
     a=1
     b=2
 
-    c=(a+b)/0
+    c=a+b
 
     print(x)
 except ZeroDivisionError:
