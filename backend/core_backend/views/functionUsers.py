@@ -4,7 +4,13 @@ from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
 from core_backend.models import Usuario
 from voluptuous.schema_builder import Required
-from backend.utils import validate_data 
+from backend.utils import validate_data
+from unidecode import unidecode
+
+def capi(input_string):
+    capitalized_string = input_string.capitalize()
+    without_accents = unidecode(capitalized_string)
+    return without_accents
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -48,8 +54,10 @@ def create_user (request):
         #('identificador'):int,
     },request.data)
     if 'apellido' not in data:
-        data['apellido'] = None 
-
+        data['apellido'] = None
+    else:
+        data['apellido']=capi(data['apellido'])
+    data['nombre']=capi(data['nombre'])
     # Obtener el último id de Usuario
     last_user_id = Usuario.objects.latest('id').id if Usuario.objects.exists() else 0
     # Calcular el nuevo identificador sumándole 1000
@@ -72,9 +80,10 @@ def update_user (request):
     try:
         user=Usuario.objects.get(identificador=data['identificador'])
         if 'nombre' in data:
-            user.nombre=data['nombre']
+            
+            user.nombre=capi(data['nombre'])
         if 'apellido' in data:
-            user.apellido=data['apellido']
+            user.apellido=capi(data['apellido'])
         user.save()
         return Response('Usuario actualizado con exito')
     except: 

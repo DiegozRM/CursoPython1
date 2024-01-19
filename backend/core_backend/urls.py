@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import functionRooms
 from .views import functionUsers
+from .views import functionReservation
 
 
 rooms_url = [
@@ -18,4 +19,11 @@ users_url = [
     path('delete_user', functionUsers.delete_user, name='delete_user'),
 ]
 
-urlpatterns = rooms_url + users_url  # Corregir la escritura de 'urlpatterns'
+reservation_url = [
+    path('create_reservation', functionReservation.create_reservation, name='create_reservation'),
+    path('get_reservation', functionReservation.get_reservation, name='get_reservation'),
+    path('update_reservation', functionReservation.update_reservation, name='update_reservation'),
+    path('delete_reservation', functionReservation.delete_reservation, name='delete_reservation'),
+]
+
+urlpatterns = rooms_url + users_url + reservation_url  # Corregir la escritura de 'urlpatterns'

@@ -5,6 +5,12 @@ from rest_framework.decorators import api_view, permission_classes
 from core_backend.models import Sala
 from voluptuous.schema_builder import Required
 from backend.utils import validate_data
+from unidecode import unidecode
+
+def capi(input_string):
+    capitalized_string = input_string.capitalize()
+    without_accents = unidecode(capitalized_string)
+    return without_accents
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -31,11 +37,14 @@ def create_room (request):
         ('aforo'):int,
     },request.data)
     if 'tamano' not in data:
-        data['tamano'] = None 
+        data['tamano'] = None
     if 'ubicacion' not in data:
         data['ubicacion'] = None
+    else:
+        data['ubicacion']=capi(data['ubicacion'])
     if 'aforo' not in data:
         data['aforo']  = None
+    data['nombre']=capi(data['nombre'])
     room = Sala.objects.create(nombre=data['nombre'],tamano=data['tamano'],ubicacion=data['ubicacion'],aforo=data['aforo'])
     room.save()
     return Response('Sala creada con exito')
@@ -53,11 +62,11 @@ def update_room (request):
     try:
         room=Sala.objects.get(id=data['id'])
         if 'nombre' in data:
-            room.nombre=data['nombre']
+            room.nombre=capi(data['nombre'])
         if 'tamano' in data:
             room.tamano=data['tamano']
         if 'ubicacion' in data:
-            room.ubicacion=data['ubicacion']
+            room.ubicacion=capi(data['ubicacion'])
         if 'aforo' in data:
             room.aforo=data['aforo']
         room.save()
